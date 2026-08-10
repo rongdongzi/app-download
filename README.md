@@ -1,13 +1,26 @@
-# App 下载中心（Gitee 免费托管）
+# App 下载中心（Gitee 存 APK + Cloudflare Pages 托管页面）
 
-uniapp 打包出的 APK，一条命令发布到 Gitee，用户扫码/点击下载最新版。
+uniapp 打包出的 APK，一条命令发布，用户扫码/点击下载最新版。
+
+## 架构
+
+```
+扫码/访问 → Cloudflare Pages 下载页（免费）
+                │
+                └→ 下载按钮 → Gitee raw 直链下载 APK（国内快、免登录）
+```
+
+- **APK 放 Gitee**：公开仓库 raw 链接，国内访问快，不受 Pages 下架影响
+- **下载页放 Cloudflare Pages**：免费、无限流量、无需绑卡
+- **固定链接**：`latest.apk` 每次覆盖上传，二维码永远不变
 
 ## 目录结构
 
 ```
 apk-download/
 ├── index.html      # 下载页（多 App 切换 + 二维码 + 下载按钮）
-├── upload.js       # 发布脚本（核心）
+├── upload.js       # 发布脚本（核心，先改里面的 Gitee 用户名！）
+├── README.md
 └── apps/
     ├── app-a/
     │   ├── latest.apk        # 永远指向最新版（二维码不变）
@@ -18,80 +31,76 @@ apk-download/
 
 ## 一、首次部署（一次性）
 
-### 1. 创建 Gitee 仓库
-1. 打开 https://gitee.com → 登录 → 右上角 `+` → 新建仓库
-2. 仓库名：`apk-download`（可改）
-3. **开源**（公开仓库，别人才能免登录下载）
-4. 勾选"初始化仓库"，创建
+### 1. 配置脚本（重要！）
+打开 `upload.js`，把顶部配置区改成你的信息：
+```js
+const GITEE_USER = "ssyzi";       // ← 改成你的 Gitee 用户名
+const GITEE_REPO = "apk-download"; // ← 你的仓库名
+```
 
-### 2. 把本地文件夹关联到 Gitee
+### 2. Gitee 仓库（存 APK）
+1. https://gitee.com → 新建**公开**仓库 `apk-download`
+2. 本地推送：
 ```bash
 cd D:\work\apk-download
 git init
 git add .
-git commit -m "初始化下载中心"
+git commit -m "初始化"
 git remote add origin https://gitee.com/你的用户名/apk-download.git
 git push -u origin master
 ```
 
-> 国内推送 Gitee 如果卡，可用 SSH 方式（Gitee 设置里生成 SSH 公钥）。
+### 3. Cloudflare Pages（托管下载页）
+1. 注册 https://dash.cloudflare.com（免费，可用邮箱注册，无需绑卡）
+2. 左侧菜单 → **Workers & Pages** → **创建** → **Pages**
+3. 选 **"直接上传"（Direct Upload）**
+4. 项目名填 `apk-download`，把本地文件夹（含 index.html 和 apps/）整个拖进去，部署
+5. 得到地址：`https://apk-download.pages.dev`
 
-### 3. 发布下载页（Gitee Pages）
-1. Gitee 仓库页面 → 服务 → Gitee Pages
-2. 首次使用需**实名认证**（手机号即可，免费）
-3. 部署分支 `master`，目录 `/`，点启动
-4. 获得访问地址：`https://你的用户名.gitee.io/apk-download/`
-   - 注意：**Gitee Pages 免费版发布 APK 二进制文件有大小限制**，所以 APK 不走 Pages，直接走仓库 raw 链接（见下）
+> ⚠️ APK 文件比较大时，"直接上传"可能超限。如果超限，APK 只在 Gitee 就行（下载页上传时**只传 index.html**，APK 不需要传上去——页面按钮指向 Gitee 直链）。
 
-### 4. 验证下载链接（关键）
-页面里 `latest.apk` 的相对链接，在 Pages 环境下会变成：
-```
-https://你的用户名.gitee.io/apk-download/apps/app-a/latest.apk
-```
-**如果这个 raw 链接不能直接下载（Gitee Pages 限制），改用 raw 直链：**
-```
-https://gitee.com/你的用户名/apk-download/raw/master/apps/app-a/latest.apk
-```
-需要把 `index.html` 里的 `apkUrl` 改成这个完整地址（或部署后在浏览器里实测哪个能下载，用哪个）。
+### 4. 验证
+浏览器打开 `https://apk-download.pages.dev`，确认页面显示；用手机扫码测试下载是否走 Gitee 直链。
 
 ## 二、日常发布（每次打包后）
 
-在 HBuilderX 里云打包 → 拿到 APK 后，执行：
-
 ```bash
+# 1. 发布（自动更新 latest.apk + 版本信息）
 node upload.js app-a "D:\HBuilderX\dist\app-a.apk" 1.2.0
-```
 
-然后：
-```bash
+# 2. 推到 Gitee（APK 上传）
 git add .
 git commit -m "发布 app-a v1.2.0"
 git push
+
+# 3. 更新 Cloudflare 下载页（任选）
+npx wrangler pages deploy . --project-name apk-download   # 自动方式
+# 或 控制台手动上传 index.html
 ```
 
-**完成。** 用户下载链接、二维码全部不变，自动指向 v1.2.0。
+**完成。** 用户下载链接、二维码全部不变。
 
 ## 三、多 App
 
-多个 uniapp 项目各自打包，分别执行：
 ```bash
 node upload.js app-a "...app-a.apk" 1.0.1
 node upload.js app-b "...app-b.apk" 2.0.0
 ```
-下载页自动出现两个 App 标签，可切换。
+下载页自动出现切换标签。
 
-## 四、配置修改
+## 四、自定义
 
-`index.html` 底部 `APPS` 数组里可手动改：
-- `name`：显示名称（默认是 appId）
+`index.html` 底部 `APPS` 数组：
+- `name`：显示名称
 - `icon`：图标背景色（如 "#FF6B6B"）
 - `desc`：版本说明/简介
+- `apkUrl`：由 upload.js 自动填为 Gitee 直链，一般不用手改
 
-## 五、常用命令速查
+## 五、常见问题
 
-| 操作 | 命令 |
+| 问题 | 解决 |
 |---|---|
-| 发布新版本 | `node upload.js app-a "APK路径" 1.2.0` |
-| 首次推送 | `git push -u origin master` |
-| 日常推送 | `git push` |
-| 看历史版本 | 仓库 `apps/app-a/` 目录 |
+| 下载页能开，点下载没反应 | 检查 Gitee 仓库是否**公开**；raw 链接在浏览器单独打开测试 |
+| 下载超慢 | Gitee raw 国内已算快的；可考虑把 APK 也放 COS（国内更快，6 个月免费） |
+| 二维码扫出来是源码 | 二维码指向了 Gitee raw 的 HTML 而非 Pages 页面——检查 index.html 的二维码生成逻辑（应基于页面地址） |
+| Cloudflare 上传超限 | 只传 index.html 不传 apps/，APK 全靠 Gitee 直链 |

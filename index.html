@@ -86,7 +86,18 @@
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script>
 // ============ 应用配置（发布新版本时由 upload.js 自动更新） ============
+// apkUrl 是 Gitee raw 直链（upload.js 自动生成），扫码直接下载 APK
 var APPS = [
+  {
+    id: "qingshishan",
+    name: "青石山app",
+    icon: "#4A90D9",
+    version: "1.2.7",
+    size: "34.6 MB",
+    date: "2026-08-10",
+    apkUrl: "https://gitee.com/ssyzi/apk-download/raw/master/apps/qingshishan/latest.apk",
+    desc: "请修改名称和简介"
+  },
   // {
   //   id: "app-a",            // 唯一标识，与 apps/ 目录一致
   //   name: "App A 名称",
@@ -94,7 +105,7 @@ var APPS = [
   //   version: "1.0.0",
   //   size: "35.2 MB",
   //   date: "2026-08-10",
-  //   apkUrl: "apps/app-a/latest.apk",   // 相对路径，永远指向最新包
+  //   apkUrl: "https://gitee.com/用户名/仓库/raw/master/apps/app-a/latest.apk",
   //   desc: "简介"
   // }
 ];
@@ -138,8 +149,8 @@ function init() {
       '<a class="download-btn" href="' + app.apkUrl + '" download>⬇ 下载最新版</a>';
     wrap.appendChild(card);
 
-    var qrText = location.href.split("#")[0].replace(/[^/]*$/, "") + app.apkUrl;
-    renderQR(document.getElementById("qr-" + i), qrText);
+    // 二维码直接指向 APK 绝对直链（Gitee raw），扫码即下载
+    renderQR(document.getElementById("qr-" + i), app.apkUrl);
   });
 }
 

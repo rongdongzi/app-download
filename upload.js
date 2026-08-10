@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * uniapp APK 发布脚本
+ * uniapp APK 发布脚本（Gitee 存 APK + Cloudflare Pages 托管下载页）
  * 用法：
  *   node upload.js <appId> <apk文件路径> [版本号]
  * 示例：
@@ -9,11 +9,19 @@
  * 功能：
  *   1. 把新 APK 复制到 apps/<appId>/latest.apk（覆盖，保持下载链接和二维码不变）
  *   2. 另存一份带版本号的历史包 apps/<appId>/<appId>-v<版本号>.apk
- *   3. 自动更新 index.html 里的 APPS 配置（版本号、大小、日期）
- *   4. 提示你执行 git push 发布到 Gitee
+ *   3. 自动更新 index.html 里的 APPS 配置（版本号、大小、日期、Gitee 直链）
+ *   4. 提示你 push 到 Gitee + 部署到 Cloudflare Pages
  */
 const fs = require("fs");
 const path = require("path");
+
+// ============ 配置区：改成你自己的 Gitee 信息 ============
+const GITEE_USER = "ssyzi";            // 你的 Gitee 用户名
+const GITEE_REPO = "apk-download";     // 你的 Gitee 仓库名
+const GITEE_BRANCH = "master";         // 分支名（Gitee 默认 master）
+// APK 下载直链前缀（Gitee raw 链接，国内访问快、免登录）
+const APK_BASE_URL = `https://gitee.com/${GITEE_USER}/${GITEE_REPO}/raw/${GITEE_BRANCH}/`;
+// =========================================================
 
 // ---------- 参数解析 ----------
 const [,, appId, apkPath, versionArg] = process.argv;
@@ -71,7 +79,6 @@ const today = new Date().toISOString().slice(0, 10);
 const indexPath = path.join(ROOT, "index.html");
 let html = fs.readFileSync(indexPath, "utf-8");
 
-// 读取现有 APPS 数组（JSON 风格对象数组，宽松解析）
 const arrRe = /var APPS\s*=\s*\[([\s\S]*?)\];/;
 const mArr = html.match(arrRe);
 if (!mArr) {
@@ -87,26 +94,23 @@ while ((mm = itemRe.exec(existingBody)) !== null) {
   apps.push(mm[1]);
 }
 
+const apkUrl = `${APK_BASE_URL}apps/${appId}/latest.apk`;
+
 if (apps.includes(appId)) {
-  // 更新已有条目（version / size / date）
-  const findItem = new RegExp(
-    `(\\{\\s*id\\s*:\\s*"${appId}"[\\s\\S]*?)(version\\s*:\\s*")[^"]*(")`,
-    "m"
+  html = html.replace(
+    new RegExp(`(\\{\\s*id\\s*:\\s*"${appId}"[\\s\\S]*?)(version\\s*:\\s*")[^"]*(")`, "m"),
+    `$1$2${version}$3`
   );
-  html = html.replace(findItem, `$1$2${version}$3`);
-  const findSize = new RegExp(
-    `(\\{\\s*id\\s*:\\s*"${appId}"[\\s\\S]*?)(size\\s*:\\s*")[^"]*(")`,
-    "m"
+  html = html.replace(
+    new RegExp(`(\\{\\s*id\\s*:\\s*"${appId}"[\\s\\S]*?)(size\\s*:\\s*")[^"]*(")`, "m"),
+    `$1$2${sizeStr}$3`
   );
-  html = html.replace(findSize, `$1$2${sizeStr}$3`);
-  const findDate = new RegExp(
-    `(\\{\\s*id\\s*:\\s*"${appId}"[\\s\\S]*?)(date\\s*:\\s*")[^"]*(")`,
-    "m"
+  html = html.replace(
+    new RegExp(`(\\{\\s*id\\s*:\\s*"${appId}"[\\s\\S]*?)(date\\s*:\\s*")[^"]*(")`, "m"),
+    `$1$2${today}$3`
   );
-  html = html.replace(findDate, `$1$2${today}$3`);
   console.log(`✓ 已更新 index.html 中 ${appId} 的版本/大小/日期`);
 } else {
-  // 新增条目
   const entry =
     `  {\n` +
     `    id: "${appId}",\n` +
@@ -115,10 +119,9 @@ if (apps.includes(appId)) {
     `    version: "${version}",\n` +
     `    size: "${sizeStr}",\n` +
     `    date: "${today}",\n` +
-    `    apkUrl: "apps/${appId}/latest.apk",\n` +
+    `    apkUrl: "${apkUrl}",\n` +
     `    desc: "请修改名称和简介"\n` +
     `  },`;
-  // 插到数组第一个元素前
   html = html.replace(/var APPS\s*=\s*\[/, "var APPS = [\n" + entry);
   console.log(`✓ 已在 index.html 新增 App 条目: ${appId}（记得改 name/icon/desc）`);
 }
@@ -130,11 +133,17 @@ console.log(`  App     : ${appId}`);
 console.log(`  版本    : v${version}`);
 console.log(`  大小    : ${sizeStr}`);
 console.log(`  日期    : ${today}`);
-console.log(`  latest  : apps/${appId}/latest.apk`);
+console.log(`  下载直链: ${apkUrl}`);
 console.log("===============================\n");
-console.log("下一步：提交并推送到 Gitee 仓库");
-console.log("  cd " + ROOT);
+
+console.log("【第 1 步】把 APK 推到 Gitee（国内下载源）:");
+console.log(`  cd ${ROOT}`);
 console.log("  git add .");
-console.log('  git commit -m "发布 ' + appId + ' v' + version + '"');
+console.log(`  git commit -m "发布 ${appId} v${version}"`);
 console.log("  git push");
-console.log("\n推送后，下载页和二维码自动指向最新版。");
+console.log("\n【第 2 步】把下载页部署到 Cloudflare Pages:");
+console.log("  方式A（推荐，自动）: 已安装 wrangler 的话执行:");
+console.log("    npx wrangler pages deploy . --project-name apk-download");
+console.log("  方式B（手动）: Cloudflare 控制台 → Workers & Pages →");
+console.log("    创建 Pages 项目 → 上传 index.html 和 apps/ 文件夹");
+console.log("\n推送+部署后，二维码自动指向最新版。");
