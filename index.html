@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App 下载中心</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 40px 16px;
+    color: #333;
+  }
+  .container { max-width: 420px; margin: 0 auto; }
+  h1 { text-align: center; color: #fff; font-size: 26px; margin-bottom: 8px; }
+  .subtitle { text-align: center; color: rgba(255,255,255,.85); font-size: 14px; margin-bottom: 24px; }
+
+  /* App 切换标签 */
+  .app-tabs { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; }
+  .app-tab {
+    padding: 10px 20px; border-radius: 999px; cursor: pointer;
+    background: rgba(255,255,255,.15); color: #fff;
+    font-size: 15px; font-weight: 600; border: 2px solid transparent;
+    transition: all .2s; user-select: none;
+  }
+  .app-tab:hover { background: rgba(255,255,255,.3); }
+  .app-tab.active { background: #fff; color: #667eea; }
+
+  /* 卡片 */
+  .card {
+    background: #fff; border-radius: 16px; padding: 28px 24px;
+    box-shadow: 0 10px 40px rgba(0,0,0,.2);
+    display: none;
+  }
+  .card.active { display: block; animation: fadeIn .3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  .app-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+  .app-icon {
+    width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 700; color: #fff;
+  }
+  .app-name { font-size: 20px; font-weight: 700; }
+  .app-version { font-size: 13px; color: #888; margin-top: 4px; }
+
+  .qr-box { text-align: center; margin: 20px 0; }
+  .qr-box img { width: 180px; height: 180px; border: 1px solid #eee; border-radius: 12px; }
+  .qr-hint { font-size: 13px; color: #999; margin-top: 8px; }
+
+  .info-row {
+    display: flex; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-row .label { color: #888; }
+  .info-row .value { font-weight: 600; color: #333; }
+
+  .download-btn {
+    display: block; width: 100%; text-align: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff; text-decoration: none; font-size: 17px; font-weight: 700;
+    padding: 14px 0; border-radius: 12px; margin-top: 20px;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .download-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102,126,234,.4); }
+  .download-btn:active { transform: none; }
+
+  .footer { text-align: center; color: rgba(255,255,255,.6); font-size: 12px; margin-top: 30px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>📱 App 下载中心</h1>
+  <p class="subtitle">扫码或点击下载，选择你的 App</p>
+
+  <div class="app-tabs" id="tabs"></div>
+
+  <div id="card-wrap"></div>
+
+  <p class="footer">© 2026 下载中心 · 最新版本实时更新</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script>
+// ============ 应用配置（发布新版本时由 upload.js 自动更新） ============
+var APPS = [
+  // {
+  //   id: "app-a",            // 唯一标识，与 apps/ 目录一致
+  //   name: "App A 名称",
+  //   icon: "#4A90D9",        // 图标背景色
+  //   version: "1.0.0",
+  //   size: "35.2 MB",
+  //   date: "2026-08-10",
+  //   apkUrl: "apps/app-a/latest.apk",   // 相对路径，永远指向最新包
+  //   desc: "简介"
+  // }
+];
+
+function renderQR(el, text) {
+  if (typeof QRCode === "undefined") {
+    el.innerHTML = '<p style="color:#d33;font-size:13px;">二维码组件未加载</p>';
+    return;
+  }
+  new QRCode(el, { text: text, width: 180, height: 180, correctLevel: QRCode.CorrectLevel.M });
+}
+
+function init() {
+  var tabs = document.getElementById("tabs");
+  var wrap = document.getElementById("card-wrap");
+
+  APPS.forEach(function (app, i) {
+    var tab = document.createElement("div");
+    tab.className = "app-tab" + (i === 0 ? " active" : "");
+    tab.textContent = app.name;
+    tab.onclick = function () {
+      document.querySelectorAll(".app-tab").forEach(function (t) { t.classList.remove("active"); });
+      tab.classList.add("active");
+      document.querySelectorAll(".card").forEach(function (c) { c.classList.remove("active"); });
+      document.querySelectorAll(".card")[i].classList.add("active");
+    };
+    tabs.appendChild(tab);
+
+    var card = document.createElement("div");
+    card.className = "card" + (i === 0 ? " active" : "");
+    card.innerHTML =
+      '<div class="app-header">' +
+        '<div class="app-icon" style="background:' + app.icon + '">' + app.name.charAt(0) + '</div>' +
+        '<div><div class="app-name">' + app.name + '</div>' +
+        '<div class="app-version">v' + app.version + '</div></div>' +
+      '</div>' +
+      '<div class="qr-box"><div id="qr-' + i + '"></div><div class="qr-hint">手机扫码下载</div></div>' +
+      '<div class="info-row"><span class="label">文件大小</span><span class="value">' + app.size + '</span></div>' +
+      '<div class="info-row"><span class="label">更新日期</span><span class="value">' + app.date + '</span></div>' +
+      '<div class="info-row"><span class="label">版本说明</span><span class="value">' + (app.desc || "—") + '</span></div>' +
+      '<a class="download-btn" href="' + app.apkUrl + '" download>⬇ 下载最新版</a>';
+    wrap.appendChild(card);
+
+    var qrText = location.href.split("#")[0].replace(/[^/]*$/, "") + app.apkUrl;
+    renderQR(document.getElementById("qr-" + i), qrText);
+  });
+}
+
+window.onload = init;
+</script>
+</body>
+</html>
