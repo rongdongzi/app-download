@@ -7,7 +7,7 @@ var APPS = [
     version: "2.1.0",
     size: "52.7 MB",
     date: "2026-08-24",
-    apkUrl: "https://dash.cloudflare.com/api/v4/accounts/b2aa4fa024372f30cb119e66ba136b57/r2/buckets/ssyzi/objects/apk-down/zjj-app.apk"
+    apkUrl: "https://pub-915f8f2224824314af379ef3757613ae.r2.dev/apk-down/zjj-app.apk"
   },
   {
     id: "qingshishan",
@@ -17,7 +17,7 @@ var APPS = [
     version: "1.2.8",
     size: "34.6 MB",
     date: "2026-08-24",
-    apkUrl: "https://dash.cloudflare.com/api/v4/accounts/b2aa4fa024372f30cb119e66ba136b57/r2/buckets/ssyzi/objects/apk-down/qingshishan-app.apk"
+    apkUrl: "https://pub-915f8f2224824314af379ef3757613ae.r2.dev/apk-down/qingshishan-app.apk"
   },
   {
     id: "baima",
@@ -27,7 +27,7 @@ var APPS = [
     version: "1.1.5",
     size: "38.3 MB",
     date: "2026-03-31",
-    apkUrl: "https://dash.cloudflare.com/api/v4/accounts/b2aa4fa024372f30cb119e66ba136b57/r2/buckets/ssyzi/objects/apk-down/baima-app.apk"
+    apkUrl: "https://pub-915f8f2224824314af379ef3757613ae.r2.dev/apk-down/baima-app.apk"
   },
   {
     id: "mingshan",
@@ -37,7 +37,7 @@ var APPS = [
     version: "2.1.1",
     size: "49.4 MB",
     date: "2026-06-23",
-    apkUrl: "https://dash.cloudflare.com/api/v4/accounts/b2aa4fa024372f30cb119e66ba136b57/r2/buckets/ssyzi/objects/apk-down/mingshan-app.apk"
+    apkUrl: "https://pub-915f8f2224824314af379ef3757613ae.r2.dev/apk-down/mingshan-app.apk"
   },
   {
     id: "let",
@@ -47,7 +47,7 @@ var APPS = [
     version: "1.3.3",
     size: "23.6 MB",
     date: "2026-08-13",
-    apkUrl: "https://dash.cloudflare.com/api/v4/accounts/b2aa4fa024372f30cb119e66ba136b57/r2/buckets/ssyzi/objects/apk-down/let-app.apk"
+    apkUrl: "https://pub-915f8f2224824314af379ef3757613ae.r2.dev/apk-down/let-app.apk"
   },
   {
     id: "jdy",
@@ -57,6 +57,6 @@ var APPS = [
     version: "1.1.23",
     size: "136.6 MB",
     date: "2025-01-16",
-    apkUrl: "https://dash.cloudflare.com/api/v4/accounts/b2aa4fa024372f30cb119e66ba136b57/r2/buckets/ssyzi/objects/apk-down/jdy-app.apk"
+    apkUrl: "https://pub-915f8f2224824314af379ef3757613ae.r2.dev/apk-down/djy-app.apk"
   }
 ];
