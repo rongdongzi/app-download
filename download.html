@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0d5f5b">
+<title>App 下载</title>
+<style>
+  :root {
+    --bg: #eef5f4;
+    --panel: #ffffff;
+    --ink: #163334;
+    --muted: #668080;
+    --line: #dce9e7;
+    --teal: #0b7a72;
+    --teal-dark: #0d5f5b;
+    --teal-soft: #e4f3f0;
+    --shadow: 0 18px 46px rgba(13, 47, 49, .16);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background:
+      linear-gradient(180deg, #dceeeb 0%, var(--bg) 42%);
+    color: var(--ink);
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+  }
+
+  .card {
+    width: min(430px, 100%);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .card-head {
+    position: relative;
+    background:
+      linear-gradient(135deg, #0c6a65, #0a8a80),
+      repeating-linear-gradient(135deg, rgba(255, 255, 255, .05) 0 1px, transparent 1px 13px);
+    color: #fff;
+    text-align: center;
+    padding: 34px 20px 38px;
+  }
+
+  .app-mark {
+    width: 74px;
+    height: 74px;
+    margin: 0 auto 14px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .18);
+    border: 1px solid rgba(255, 255, 255, .2);
+    color: #fff;
+    font-size: 34px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 12px 26px rgba(0, 0, 0, .16);
+  }
+
+  .card-head h1 {
+    font-size: 23px;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+    letter-spacing: 0;
+  }
+
+  .head-chips {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  .head-chip {
+    background: rgba(255, 255, 255, .15);
+    border: 1px solid rgba(255, 255, 255, .24);
+    border-radius: 6px;
+    color: rgba(255, 255, 255, .95);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 9px;
+  }
+
+  .card-body {
+    padding: 24px 20px calc(22px + env(safe-area-inset-bottom));
+    text-align: center;
+  }
+
+  .scan-title {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .scan-title span {
+    display: block;
+    color: var(--ink);
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 3px;
+  }
+
+  .qr-frame {
+    width: 236px;
+    height: 236px;
+    margin: 16px auto 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 0 8px #fff, 0 0 0 1px #e9f1f0;
+  }
+
+  .qr-frame canvas {
+    width: 208px;
+    height: 208px;
+  }
+
+  .scan-tip {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.8;
+  }
+
+  .download-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    width: 100%;
+    min-height: 52px;
+    margin-top: 18px;
+    border-radius: 8px;
+    background: linear-gradient(120deg, var(--teal-dark), var(--teal));
+    color: #fff;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 10px 22px rgba(11, 122, 114, .26);
+    transition: transform .14s, box-shadow .14s;
+  }
+
+  .download-btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .download-btn:active {
+    transform: translateY(0);
+  }
+
+  .download-btn svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .version-note {
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 10px;
+  }
+
+  .wechat-hint {
+    display: none;
+    margin-top: 12px;
+    background: #fff7df;
+    border: 1px solid #efd68a;
+    border-radius: 8px;
+    color: #7a5410;
+    font-size: 12px;
+    line-height: 1.7;
+    padding: 10px 12px;
+    text-align: left;
+  }
+
+  .wechat-hint.show {
+    display: block;
+  }
+
+  .missing {
+    text-align: center;
+    padding: 46px 24px;
+  }
+
+  .missing h1 {
+    font-size: 22px;
+  }
+
+  .missing p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 10px;
+  }
+
+  .missing a {
+    display: inline-block;
+    margin-top: 18px;
+    background: var(--teal);
+    color: #fff;
+    text-decoration: none;
+    padding: 11px 18px;
+    border-radius: 8px;
+    font-weight: 800;
+  }
+
+  @media (min-width: 700px) {
+    body {
+      background:
+        linear-gradient(180deg, #d8ede9 0%, #eef5f4 42%);
+    }
+  }
+</style>
+</head>
+<body>
+  <div id="content"></div>
+
+  <script src="apps.js"></script>
+  <script src="qrcode.min.js"></script>
+  <script>
+    function esc(value) {
+      return String(value).replace(/[&<>"']/g, function (ch) {
+        return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch];
+      });
+    }
+
+    function getAppId() {
+      var match = window.location.search.match(/[?&]id=([^&]+)/);
+      if (!match) return "";
+      try {
+        return decodeURIComponent(match[1]);
+      } catch (err) {
+        return match[1];
+      }
+    }
+
+    function isWeChat() {
+      return /MicroMessenger/i.test(navigator.userAgent);
+    }
+
+    function renderApp(app) {
+      var content = document.getElementById("content");
+      content.innerHTML =
+        '<div class="card">' +
+          '<header class="card-head">' +
+            '<div class="app-mark" style="background:' + esc(app.icon || "#0b7a72") + '">' + esc(app.name.charAt(0)) + "</div>" +
+            "<h1>" + esc(app.name) + "</h1>" +
+            '<div class="head-chips">' +
+              '<span class="head-chip">v' + esc(app.version) + "</span>" +
+              '<span class="head-chip">' + esc(app.size) + "</span>" +
+              '<span class="head-chip">' + esc(app.date) + "</span>" +
+            "</div>" +
+          "</header>" +
+          '<div class="card-body">' +
+            '<div class="scan-title"><span>扫码下载</span>Android 手机扫码直接安装</div>' +
+            '<div class="qr-frame"><div id="qrBox"></div></div>' +
+            '<p class="scan-tip">二维码每次发布后都指向最新版 APK</p>' +
+            '<a class="download-btn" id="downloadBtn" href="' + esc(app.apkUrl) + '" download>' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>' +
+              '<span>下载 v' + esc(app.version) + "</span>" +
+            "</a>" +
+            '<div class="version-note">需要 Android 6.0 及以上版本</div>' +
+            '<div class="wechat-hint" id="wechatHint">当前在微信内下载可能受限，请点右上角选择“在浏览器打开”后再下载。</div>' +
+          "</div>" +
+        "</div>";
+
+      document.title = app.name + " 下载";
+      document.getElementById("downloadBtn").setAttribute("download", app.name + ".apk");
+
+      var hint = document.getElementById("wechatHint");
+      if (isWeChat()) {
+        hint.classList.add("show");
+      }
+
+      renderQR(app);
+    }
+
+    function renderQR(app) {
+      var box = document.getElementById("qrBox");
+      if (typeof QRCode === "undefined") {
+        box.innerHTML = '<p style="color:#b42318;font-size:13px;">二维码组件加载失败</p>';
+        return;
+      }
+      new QRCode(box, {
+        text: app.apkUrl,
+        width: 208,
+        height: 208,
+        colorDark: "#163334",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    }
+
+    function renderMissing() {
+      document.getElementById("content").innerHTML =
+        '<div class="card"><div class="missing">' +
+          "<h1>未找到该应用</h1>" +
+          "<p>请返回首页选择要下载的 App。</p>" +
+          '<a href="index.html">返回全部 App</a>' +
+        "</div></div>";
+    }
+
+    function init() {
+      var app = null;
+      if (typeof APPS !== "undefined") {
+        app = APPS.find(function (item) { return item.id === getAppId(); });
+      }
+      if (!app) {
+        renderMissing();
+        return;
+      }
+      renderApp(app);
+    }
+
+    window.addEventListener("load", init);
+  </script>
+</body>
+</html>

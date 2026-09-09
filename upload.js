@@ -9,7 +9,7 @@
  * 功能：
  *   1. 把新 APK 复制到 apps/<appId>/latest.apk（覆盖，保持下载链接和二维码不变）
  *   2. 另存一份带版本号的历史包 apps/<appId>/<appId>-v<版本号>.apk
- *   3. 自动更新 index.html 里的 APPS 配置（版本号、大小、日期、Gitee 直链）
+ *   3. 自动更新 apps.js 里的 APPS 配置（版本号、大小、日期、Gitee 直链）
  *   4. 提示你 push 到 Gitee + 部署到 Cloudflare Pages
  */
 const fs = require("fs");
@@ -34,7 +34,7 @@ if (!appId || !apkPath) {
   node upload.js app-a "D:/HBuilderX/dist/app-a.apk" 1.2.0
   node upload.js app-b "D:/build/app-b-release.apk" 2.1.3
 
-appId 必须与 index.html 中 APPS 配置里的 id 一致。
+appId 必须与 apps.js 中 APPS 配置里的 id 一致。
 `);
   process.exit(1);
 }
@@ -75,14 +75,14 @@ const bytes = fs.statSync(LATEST_PATH).size;
 const sizeStr = (bytes / (1024 * 1024)).toFixed(1) + " MB";
 const today = new Date().toISOString().slice(0, 10);
 
-// ---------- 更新 index.html 的 APPS 配置 ----------
-const indexPath = path.join(ROOT, "index.html");
+// ---------- 更新 apps.js 的 APPS 配置 ----------
+const indexPath = path.join(ROOT, "apps.js");
 let html = fs.readFileSync(indexPath, "utf-8");
 
 const arrRe = /var APPS\s*=\s*\[([\s\S]*?)\];/;
 const mArr = html.match(arrRe);
 if (!mArr) {
-  console.error("✗ index.html 中找不到 var APPS = [...] 配置块");
+  console.error("✗ apps.js 中找不到 var APPS = [...] 配置块");
   process.exit(1);
 }
 
@@ -109,7 +109,7 @@ if (apps.includes(appId)) {
     new RegExp(`(\\{\\s*id\\s*:\\s*"${appId}"[\\s\\S]*?)(date\\s*:\\s*")[^"]*(")`, "m"),
     `$1$2${today}$3`
   );
-  console.log(`✓ 已更新 index.html 中 ${appId} 的版本/大小/日期`);
+  console.log(`✓ 已更新 apps.js 中 ${appId} 的版本/大小/日期`);
 } else {
   const entry =
     `  {\n` +
@@ -123,7 +123,7 @@ if (apps.includes(appId)) {
     `    desc: "请修改名称和简介"\n` +
     `  },`;
   html = html.replace(/var APPS\s*=\s*\[/, "var APPS = [\n" + entry);
-  console.log(`✓ 已在 index.html 新增 App 条目: ${appId}（记得改 name/icon/desc）`);
+  console.log(`✓ 已在 apps.js 新增 App 条目: ${appId}（记得改 name/icon/desc）`);
 }
 fs.writeFileSync(indexPath, html);
 
@@ -145,5 +145,5 @@ console.log("\n【第 2 步】把下载页部署到 Cloudflare Pages:");
 console.log("  方式A（推荐，自动）: 已安装 wrangler 的话执行:");
 console.log("    npx wrangler pages deploy . --project-name apk-download");
 console.log("  方式B（手动）: Cloudflare 控制台 → Workers & Pages →");
-console.log("    创建 Pages 项目 → 上传 index.html 和 apps/ 文件夹");
+  console.log("    创建 Pages 项目 → 上传整个文件夹（index.html、download.html、apps.js、apps/）");
 console.log("\n推送+部署后，二维码自动指向最新版。");

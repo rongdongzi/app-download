@@ -18,7 +18,11 @@ uniapp 打包出的 APK，一条命令发布，用户扫码/点击下载最新�
 
 ```
 apk-download/
-├── index.html      # 下载页（多 App 切换 + 二维码 + 下载按钮）
+├── index.html      # 全部 App 列表首页
+├── download.html   # 单个 App 下载详情页（通过 ?id=xxx 打开）
+├── apps.js         # APPS 配置（名称、版本、大小、APK 直链）
+├── qrcode.min.js   # 本地二维码组件
+├── _headers        # Cloudflare Pages 缓存与响应头配置
 ├── upload.js       # 发布脚本（核心，先改里面的 Gitee 用户名！）
 ├── README.md
 └── apps/
@@ -54,10 +58,10 @@ git push -u origin master
 1. 注册 https://dash.cloudflare.com（免费，可用邮箱注册，无需绑卡）
 2. 左侧菜单 → **Workers & Pages** → **创建** → **Pages**
 3. 选 **"直接上传"（Direct Upload）**
-4. 项目名填 `apk-download`，把本地文件夹（含 index.html 和 apps/）整个拖进去，部署
+4. 项目名填 `apk-download`，把本地文件夹（含 index.html、download.html、apps.js 和 apps/）整个拖进去，部署
 5. 得到地址：`https://apk-download.pages.dev`
 
-> ⚠️ APK 文件比较大时，"直接上传"可能超限。如果超限，APK 只在 Gitee 就行（下载页上传时**只传 index.html**，APK 不需要传上去——页面按钮指向 Gitee 直链）。
+> ⚠️ APK 文件比较大时，"直接上传"可能超限。如果超限，APK 只在 Gitee 就行（下载页上传 index.html、download.html、apps.js、qrcode.min.js、_headers 即可，不需要传 apps/ 里的 APK——页面链接指向 Gitee 直链）。
 
 ### 4. 验证
 浏览器打开 `https://apk-download.pages.dev`，确认页面显示；用手机扫码测试下载是否走 Gitee 直链。
@@ -75,7 +79,7 @@ git push
 
 # 3. 更新 Cloudflare 下载页（任选）
 npx wrangler pages deploy . --project-name apk-download   # 自动方式
-# 或 控制台手动上传 index.html
+# 或 控制台手动上传 index.html、download.html、apps.js、qrcode.min.js、_headers
 ```
 
 **完成。** 用户下载链接、二维码全部不变。
@@ -90,7 +94,7 @@ node upload.js app-b "...app-b.apk" 2.0.0
 
 ## 四、自定义
 
-`index.html` 底部 `APPS` 数组：
+`apps.js` 中的 `APPS` 数组：
 - `name`：显示名称
 - `icon`：图标背景色（如 "#FF6B6B"）
 - `desc`：版本说明/简介
@@ -102,5 +106,5 @@ node upload.js app-b "...app-b.apk" 2.0.0
 |---|---|
 | 下载页能开，点下载没反应 | 检查 Gitee 仓库是否**公开**；raw 链接在浏览器单独打开测试 |
 | 下载超慢 | Gitee raw 国内已算快的；可考虑把 APK 也放 COS（国内更快，6 个月免费） |
-| 二维码扫出来是源码 | 二维码指向了 Gitee raw 的 HTML 而非 Pages 页面——检查 index.html 的二维码生成逻辑（应基于页面地址） |
-| Cloudflare 上传超限 | 只传 index.html 不传 apps/，APK 全靠 Gitee 直链 |
+| 二维码扫出来是源码 | 二维码指向了 Gitee raw 的 HTML 而非 Pages 页面——检查 download.html 的二维码生成逻辑（应指向 APK 直链） |
+| Cloudflare 上传超限 | 只传 index.html、download.html、apps.js、qrcode.min.js、_headers，不传 apps/，APK 全靠 Gitee 直链 |

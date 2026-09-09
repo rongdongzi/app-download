@@ -1,0 +1,13 @@
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/download.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/apps.js
+  Cache-Control: public, max-age=0, must-revalidate
