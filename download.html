@@ -44,7 +44,7 @@
       radial-gradient(120% 90% at 50% 0%, #0c8f83 0%, #0a6b65 48%, #095550 100%);
     color: #fff;
     text-align: center;
-    padding: 44px 22px 86px;
+    padding: calc(42px + env(safe-area-inset-top)) 22px 86px;
     position: relative;
     overflow: hidden;
   }
@@ -232,6 +232,12 @@
     height: 20px;
   }
 
+  .download-btn.off {
+    background: #dfe6e4;
+    box-shadow: none;
+    color: #5c6f6e;
+  }
+
   .missing {
     background: var(--panel);
     border-radius: 8px;
@@ -293,7 +299,7 @@
   <script src="qrcode.min.js"></script>
   <script>
     function esc(value) {
-      return String(value).replace(/[&<>"']/g, function (ch) {
+      return String(value == null ? "" : value).replace(/[&<>"']/g, function (ch) {
         return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch];
       });
     }
@@ -312,14 +318,21 @@
       return /MicroMessenger/i.test(navigator.userAgent);
     }
 
+    function gradient(accent) {
+      var a = accent && accent[0] ? accent[0] : "#0b7d74";
+      var b = accent && accent[1] ? accent[1] : "#38b2a4";
+      return "linear-gradient(135deg," + a + "," + b + ")";
+    }
+
     function renderApp(app) {
+      var available = !!app.apkUrl;
       var content = document.getElementById("content");
       content.innerHTML =
         '<section class="hero">' +
           '<div class="hero-inner">' +
-            '<div class="app-icon" style="background:' + esc(app.icon || "linear-gradient(135deg, #0b7d74, #38b2a4)") + '">' + esc(app.name.charAt(0)) + "</div>" +
+            '<div class="app-icon" style="background:' + gradient(app.accent) + '">' + esc(app.name.charAt(0)) + "</div>" +
             "<h1>" + esc(app.name) + "</h1>" +
-            "<p>Android 安卓版本</p>" +
+            "<p>" + esc(app.desc || "Android 安卓版本") + "</p>" +
             '<div class="chips">' +
               '<span class="chip">v' + esc(app.version) + "</span>" +
               '<span class="chip">' + esc(app.size) + "</span>" +
@@ -329,36 +342,44 @@
         "</section>" +
         '<section class="content">' +
           '<div class="scan-block">' +
-            '<div class="scan-label">' +
-              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>' +
-              "<span>扫码下载</span>" +
-            "</div>" +
-            '<div class="qr-frame"><div id="qrBox"></div></div>' +
-            '<p class="tip">使用手机扫码后可直接下载 APK 文件</p>' +
+            (available
+              ? '<div class="scan-label">' +
+                  '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>' +
+                  "<span>扫码下载</span>" +
+                "</div>" +
+                '<div class="qr-frame"><div id="qrBox"></div></div>' +
+                '<p class="tip">使用手机扫码后可直接下载 APK 文件</p>'
+              : '<p class="tip">' + esc(app.note || "下载链接整理中，请稍后再试") + "</p>"
+            ) +
             '<div class="wechat-hint" id="wechatHint">当前在微信内下载可能受限，请点右上角选择“在浏览器打开”后再下载。</div>' +
-            '<a class="download-btn" id="downloadBtn" href="' + esc(app.apkUrl) + '" download>' +
-              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>' +
-              '<span>下载 v' + esc(app.version) + "</span>" +
-            "</a>" +
+            (available
+              ? '<a class="download-btn" id="downloadBtn" href="' + esc(app.apkUrl) + '" download>' +
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>' +
+                  '<span>下载 v' + esc(app.version) + "</span>" +
+                "</a>"
+              : '<div class="download-btn off"><span>待整理下载链接</span></div>'
+            ) +
           "</div>" +
         "</section>";
 
       document.title = app.name + " 下载";
-      document.getElementById("downloadBtn").setAttribute("download", app.name + ".apk");
+      if (available) {
+        document.getElementById("downloadBtn").setAttribute("download", app.name + ".apk");
+        renderQR(app.apkUrl);
+      }
       if (isWeChat()) {
         document.getElementById("wechatHint").classList.add("show");
       }
-      renderQR(app);
     }
 
-    function renderQR(app) {
+    function renderQR(url) {
       var box = document.getElementById("qrBox");
       if (typeof QRCode === "undefined") {
         box.innerHTML = '<p style="color:#b42318;font-size:13px;">二维码组件加载失败</p>';
         return;
       }
       new QRCode(box, {
-        text: app.apkUrl,
+        text: url,
         width: 212,
         height: 212,
         colorDark: "#193234",
@@ -388,7 +409,7 @@
       renderApp(app);
     }
 
-    window.addEventListener("load", init);
+    window.addEventListener("DOMContentLoaded", init);
   </script>
 </body>
 </html>
