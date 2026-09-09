@@ -3,20 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0d5f5b">
+<meta name="theme-color" content="#f6f8f8">
 <title>App 下载中心</title>
 <style>
   :root {
-    --bg: #f1f6f5;
+    --bg: #f2f6f6;
     --panel: #ffffff;
-    --ink: #142f31;
-    --muted: #637779;
-    --line: #dbe7e5;
-    --teal: #0b7a72;
-    --teal-dark: #0d5f5b;
-    --teal-soft: #e4f3f0;
-    --amber: #b7791f;
-    --shadow: 0 16px 40px rgba(13, 47, 49, .10);
+    --ink: #1b3133;
+    --muted: #718183;
+    --line: #e3ecea;
+    --brand: #0c7d74;
+    --brand-dark: #0b5f5a;
+    --brand-soft: #e6f4f1;
+    --shadow: 0 10px 30px rgba(26, 66, 67, .08);
   }
 
   * {
@@ -26,376 +25,256 @@
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
     background: var(--bg);
     color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
     min-height: 100vh;
   }
 
-  .shell {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .masthead {
-    position: relative;
-    background:
-      linear-gradient(115deg, rgba(12, 88, 84, .96), rgba(11, 122, 114, .94)),
-      repeating-linear-gradient(135deg, rgba(255, 255, 255, .06) 0 1px, transparent 1px 13px);
-    color: #fff;
-    overflow: hidden;
-  }
-
-  .masthead::after {
-    content: "";
-    position: absolute;
-    left: -10%;
-    right: -10%;
-    bottom: -34px;
-    height: 74px;
-    background: var(--bg);
-    border-radius: 50% 50% 0 0;
-    transform: rotate(-1deg);
-  }
-
-  .masthead-inner,
-  .main,
-  .footer-inner {
-    width: min(980px, 100%);
+  .page {
+    width: min(680px, 100%);
     margin: 0 auto;
+    padding: 18px 16px calc(30px + env(safe-area-inset-bottom));
   }
 
-  .masthead-inner {
-    padding: 34px 22px 64px;
-  }
-
-  .brandline {
+  .topbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 14px;
+    padding: 8px 0 26px;
   }
 
   .brand {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 11px;
+    color: var(--ink);
     font-size: 15px;
     font-weight: 800;
   }
 
-  .brand-dot {
+  .brand svg {
     width: 30px;
     height: 30px;
+    padding: 7px;
+    background: linear-gradient(135deg, var(--brand), #38b2a4);
     border-radius: 8px;
-    background: rgba(255, 255, 255, .18);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    color: #fff;
   }
 
   .domain {
+    color: var(--muted);
     font-size: 12px;
-    color: rgba(255, 255, 255, .72);
-    font-weight: 600;
   }
 
-  .intro {
-    margin-top: 42px;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 24px;
-  }
-
-  .kicker {
-    font-size: 12px;
-    font-weight: 800;
-    color: #9de0d5;
+  .headline h1 {
+    font-size: 25px;
+    line-height: 1.25;
     letter-spacing: 0;
   }
 
-  h1 {
-    font-size: clamp(30px, 5vw, 46px);
-    line-height: 1.12;
-    letter-spacing: 0;
-    margin-top: 10px;
-  }
-
-  .intro p {
-    color: rgba(255, 255, 255, .82);
-    font-size: 15px;
+  .headline p {
+    color: var(--muted);
+    font-size: 13px;
     line-height: 1.7;
-    margin-top: 14px;
-  }
-
-  .count-pill {
-    flex-shrink: 0;
-    background: rgba(255, 255, 255, .13);
-    border: 1px solid rgba(255, 255, 255, .22);
-    border-radius: 8px;
-    padding: 10px 14px;
-    text-align: center;
-  }
-
-  .count-pill strong {
-    display: block;
-    font-size: 22px;
-    line-height: 1;
-  }
-
-  .count-pill span {
-    font-size: 11px;
-    color: rgba(255, 255, 255, .75);
-    margin-top: 5px;
-  }
-
-  .main {
-    flex: 1;
-    padding: 0 22px 60px;
+    margin-top: 8px;
   }
 
   .section-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 14px;
-    padding: 8px 2px 16px;
+    gap: 12px;
+    margin: 28px 0 12px;
   }
 
   .section-head h2 {
-    font-size: 20px;
+    font-size: 17px;
   }
 
-  .update-label {
+  .section-head span {
     color: var(--muted);
     font-size: 12px;
-    text-align: right;
   }
 
   .app-list {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 10px;
   }
 
-  .app-card {
+  .app-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 15px;
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: 8px;
     box-shadow: var(--shadow);
-    padding: 18px;
-    color: inherit;
+    padding: 15px;
     text-decoration: none;
-    display: grid;
-    grid-template-columns: 64px 1fr auto;
-    align-items: center;
-    gap: 16px;
-    transition: transform .16s, border-color .16s, box-shadow .16s;
+    color: inherit;
+    overflow: hidden;
+    transition: transform .15s, box-shadow .15s, border-color .15s;
   }
 
-  .app-card:hover {
+  .app-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--brand);
+    opacity: 0;
+    transition: opacity .15s;
+  }
+
+  .app-item:hover {
     transform: translateY(-2px);
-    border-color: #75c6ba;
-    box-shadow: 0 22px 46px rgba(13, 47, 49, .15);
+    border-color: #b6dcd5;
+    box-shadow: 0 14px 34px rgba(26, 66, 67, .12);
   }
 
-  .app-mark {
-    width: 64px;
-    height: 64px;
-    border-radius: 8px;
+  .app-item:hover::before {
+    opacity: 1;
+  }
+
+  .app-icon {
+    width: 62px;
+    height: 62px;
+    border-radius: 10px;
     color: #fff;
-    font-size: 28px;
+    font-size: 27px;
     font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: inset 0 -8px 18px rgba(0, 0, 0, .10);
+    flex-shrink: 0;
+    box-shadow: inset 0 -9px 16px rgba(0, 0, 0, .09), 0 8px 16px rgba(30, 70, 70, .14);
   }
 
-  .app-copy {
+  .app-info {
+    flex: 1;
     min-width: 0;
   }
 
-  .app-copy h3 {
-    font-size: 18px;
+  .app-info h3 {
+    font-size: 17px;
     overflow-wrap: anywhere;
   }
 
-  .app-copy .desc {
+  .app-info p {
     color: var(--muted);
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.5;
-    margin-top: 5px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    margin-top: 4px;
   }
 
-  .meta-row {
+  .app-meta {
     display: flex;
-    gap: 8px;
+    align-items: center;
+    gap: 7px;
     flex-wrap: wrap;
-    margin-top: 10px;
+    margin-top: 9px;
   }
 
-  .meta-chip {
-    color: #426061;
+  .chip {
+    color: #496466;
     background: #f3f8f7;
-    border: 1px solid #e5eeec;
+    border: 1px solid #e6eeec;
     border-radius: 6px;
     font-size: 11px;
     font-weight: 700;
-    padding: 4px 8px;
+    padding: 4px 7px;
   }
 
-  .meta-chip.live {
-    color: var(--teal);
-    background: var(--teal-soft);
+  .chip.teal {
+    color: var(--brand);
+    background: var(--brand-soft);
     border-color: #cde9e2;
   }
 
-  .open {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--teal);
-    font-size: 13px;
-    font-weight: 800;
-    white-space: nowrap;
-  }
-
-  .open .arrow-circle {
-    width: 38px;
-    height: 38px;
+  .chevron {
+    width: 34px;
+    height: 34px;
     border-radius: 8px;
-    display: inline-flex;
+    background: var(--brand-soft);
+    color: var(--brand);
+    display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--teal-soft);
-    color: var(--teal);
+    flex-shrink: 0;
+  }
+
+  .empty {
+    background: var(--panel);
+    border: 1px dashed var(--line);
+    border-radius: 8px;
+    color: var(--muted);
+    padding: 40px 18px;
+    text-align: center;
+    font-size: 14px;
   }
 
   .footer {
-    border-top: 1px solid var(--line);
-    background: #fbfdfd;
-    padding: 18px;
+    color: #94a5a5;
+    font-size: 11px;
+    text-align: center;
+    padding-top: 26px;
   }
 
-  .footer-inner {
-    color: var(--muted);
-    font-size: 12px;
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  @media (max-width: 680px) {
-    .masthead-inner {
-      padding: 22px 16px 54px;
+  @media (max-width: 480px) {
+    .page {
+      padding: 14px 12px calc(24px + env(safe-area-inset-bottom));
     }
 
-    .intro {
-      display: block;
-      margin-top: 30px;
+    .headline h1 {
+      font-size: 23px;
     }
 
-    .count-pill {
-      display: none;
+    .app-item {
+      padding: 13px;
+      gap: 12px;
     }
 
-    h1 {
-      font-size: 32px;
-    }
-
-    .main {
-      padding: 0 14px 40px;
-    }
-
-    .app-card {
-      grid-template-columns: 54px 1fr;
-      gap: 13px;
-      padding: 15px;
-    }
-
-    .app-mark {
-      width: 54px;
-      height: 54px;
+    .app-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 10px;
       font-size: 24px;
-    }
-
-    .app-copy .desc {
-      white-space: normal;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-    }
-
-    .open {
-      grid-column: 1 / -1;
-      justify-content: flex-end;
-      border-top: 1px dashed var(--line);
-      padding-top: 11px;
-    }
-
-    .open .text {
-      font-size: 12px;
-    }
-
-    .arrow-circle {
-      width: 32px;
-      height: 32px;
     }
   }
 </style>
 </head>
 <body>
-  <div class="shell">
-    <header class="masthead">
-      <div class="masthead-inner">
-        <div class="brandline">
-          <div class="brand">
-            <span class="brand-dot">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path>
-                <path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-              </svg>
-            </span>
-            <span>App 下载中心</span>
-          </div>
-          <div class="domain" id="siteDomain"></div>
-        </div>
-
-        <div class="intro">
-          <div>
-            <div class="kicker">ANDROID APPLICATION</div>
-            <h1>选择一个 App</h1>
-            <p>进入对应的安卓下载页面，扫码或点击下载最新版。</p>
-          </div>
-          <div class="count-pill" id="countPill">
-            <strong id="appCount">0</strong>
-            <span>个可用应用</span>
-          </div>
-        </div>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path>
+          <path d="M2 12h20"></path>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+        <span>App 下载中心</span>
       </div>
+      <div class="domain" id="siteDomain"></div>
     </header>
 
-    <main class="main">
-      <div class="section-head">
-        <h2>全部应用</h2>
-        <div class="update-label" id="updateLabel"></div>
-      </div>
-      <div class="app-list" id="appList"></div>
-    </main>
+    <section class="headline">
+      <h1>选择要安装的 App</h1>
+      <p>进入应用专属下载页，扫码即可安装最新版。</p>
+    </section>
 
-    <footer class="footer">
-      <div class="footer-inner">
-        <span>© 2026 App 下载中心</span>
-        <span id="footerDate"></span>
-      </div>
-    </footer>
+    <div class="section-head">
+      <h2>全部应用</h2>
+      <span id="updateLabel"></span>
+    </div>
+
+    <main class="app-list" id="appList"></main>
+
+    <footer class="footer" id="footerDate"></footer>
   </div>
 
   <script src="apps.js"></script>
@@ -406,47 +285,47 @@
       });
     }
 
-    function cardIconSvg() {
-      return '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>';
+    function chevronSvg() {
+      return '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>';
     }
 
     function renderApps() {
       var list = document.getElementById("appList");
       if (!APPS || !APPS.length) {
-        list.innerHTML = '<p class="empty">暂无可下载应用</p>';
+        list.innerHTML = '<div class="empty">暂无可下载应用</div>';
         return;
       }
 
       APPS.forEach(function (app) {
-        var card = document.createElement("a");
-        card.className = "app-card";
-        card.href = "download.html?id=" + encodeURIComponent(app.id);
-        card.setAttribute("aria-label", "打开 " + app.name + " 下载页");
+        var item = document.createElement("a");
+        item.className = "app-item";
+        item.href = "download.html?id=" + encodeURIComponent(app.id);
+        item.setAttribute("aria-label", "打开 " + app.name + " 下载页");
 
-        var mark = document.createElement("div");
-        mark.className = "app-mark";
-        mark.style.background = app.icon || "#0b7a72";
-        mark.textContent = app.name.charAt(0);
+        var icon = document.createElement("div");
+        icon.className = "app-icon";
+        icon.style.background = app.icon || "linear-gradient(135deg, #0c7d74, #38b2a4)";
+        icon.textContent = app.name.charAt(0);
 
-        var copy = document.createElement("div");
-        copy.className = "app-copy";
-        copy.innerHTML =
+        var info = document.createElement("div");
+        info.className = "app-info";
+        info.innerHTML =
           "<h3>" + esc(app.name) + "</h3>" +
-          '<div class="desc">' + esc(app.desc || "Android APK") + "</div>" +
-          '<div class="meta-row">' +
-            '<span class="meta-chip live">v' + esc(app.version) + "</span>" +
-            '<span class="meta-chip">' + esc(app.size) + "</span>" +
-            '<span class="meta-chip">更新 ' + esc(app.date) + "</span>" +
+          "<p>" + esc(app.desc || "Android APK") + "</p>" +
+          '<div class="app-meta">' +
+            '<span class="chip teal">v' + esc(app.version) + "</span>" +
+            '<span class="chip">' + esc(app.size) + "</span>" +
+            '<span class="chip">' + esc(app.date) + "</span>" +
           "</div>";
 
-        var open = document.createElement("div");
-        open.className = "open";
-        open.innerHTML = '<span class="text">查看下载页</span><span class="arrow-circle">' + cardIconSvg() + "</span>";
+        var chevron = document.createElement("div");
+        chevron.className = "chevron";
+        chevron.innerHTML = chevronSvg();
 
-        card.appendChild(mark);
-        card.appendChild(copy);
-        card.appendChild(open);
-        list.appendChild(card);
+        item.appendChild(icon);
+        item.appendChild(info);
+        item.appendChild(chevron);
+        list.appendChild(item);
       });
     }
 
@@ -459,16 +338,10 @@
 
     window.addEventListener("load", function () {
       renderApps();
-      document.getElementById("appCount").textContent = APPS ? APPS.length : 0;
-      document.getElementById("updateLabel").textContent = "最近更新 " + latestDate();
-      document.getElementById("footerDate").textContent = "最近更新 " + latestDate();
-
-      var domain = document.getElementById("siteDomain");
-      try {
-        domain.textContent = window.location.hostname || "ssyzi.site";
-      } catch (err) {
-        domain.textContent = "ssyzi.site";
-      }
+      var date = latestDate();
+      document.getElementById("updateLabel").textContent = "最近更新 " + date;
+      document.getElementById("footerDate").textContent = "© 2026 App 下载中心 · 最近更新 " + date;
+      document.getElementById("siteDomain").textContent = window.location.hostname || "ssyzi.site";
     });
   </script>
 </body>

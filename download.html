@@ -3,19 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0d5f5b">
+<meta name="theme-color" content="#0b5f5a">
 <title>App 下载</title>
 <style>
   :root {
-    --bg: #eef5f4;
+    --ink: #193234;
+    --muted: #6d8081;
+    --line: #e3ecea;
+    --brand: #0b7d74;
+    --brand-deep: #0a5d59;
+    --brand-soft: #e6f4f1;
     --panel: #ffffff;
-    --ink: #163334;
-    --muted: #668080;
-    --line: #dce9e7;
-    --teal: #0b7a72;
-    --teal-dark: #0d5f5b;
-    --teal-soft: #e4f3f0;
-    --shadow: 0 18px 46px rgba(13, 47, 49, .16);
+    --bg: #eaf3f2;
   }
 
   * {
@@ -25,158 +24,161 @@
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-    background:
-      linear-gradient(180deg, #dceeeb 0%, var(--bg) 42%);
-    color: var(--ink);
     min-height: 100vh;
     min-height: 100dvh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 14px;
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: var(--ink);
   }
 
-  .card {
-    width: min(430px, 100%);
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    box-shadow: var(--shadow);
+  .page {
+    width: min(520px, 100%);
+    min-height: 100vh;
+    min-height: 100dvh;
+    margin: 0 auto;
+    background: var(--bg);
+  }
+
+  .hero {
+    background:
+      radial-gradient(120% 90% at 50% 0%, #0c8f83 0%, #0a6b65 48%, #095550 100%);
+    color: #fff;
+    text-align: center;
+    padding: 44px 22px 86px;
+    position: relative;
     overflow: hidden;
   }
 
-  .card-head {
-    position: relative;
-    background:
-      linear-gradient(135deg, #0c6a65, #0a8a80),
-      repeating-linear-gradient(135deg, rgba(255, 255, 255, .05) 0 1px, transparent 1px 13px);
-    color: #fff;
-    text-align: center;
-    padding: 34px 20px 38px;
+  .hero::before,
+  .hero::after {
+    content: "";
+    position: absolute;
+    border: 1px solid rgba(255, 255, 255, .16);
+    border-radius: 50%;
+    pointer-events: none;
   }
 
-  .app-mark {
-    width: 74px;
-    height: 74px;
-    margin: 0 auto 14px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, .18);
-    border: 1px solid rgba(255, 255, 255, .2);
+  .hero::before {
+    width: 220px;
+    height: 220px;
+    right: -80px;
+    top: -80px;
+  }
+
+  .hero::after {
+    width: 150px;
+    height: 150px;
+    left: -60px;
+    bottom: -40px;
+  }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .app-icon {
+    width: 88px;
+    height: 88px;
+    margin: 0 auto;
+    border-radius: 12px;
     color: #fff;
-    font-size: 34px;
+    font-size: 40px;
     font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 12px 26px rgba(0, 0, 0, .16);
+    box-shadow:
+      0 18px 34px rgba(0, 0, 0, .22),
+      inset 0 -10px 22px rgba(0, 0, 0, .12);
   }
 
-  .card-head h1 {
-    font-size: 23px;
-    line-height: 1.25;
-    overflow-wrap: anywhere;
+  .hero h1 {
+    font-size: 27px;
+    line-height: 1.3;
     letter-spacing: 0;
+    overflow-wrap: anywhere;
+    margin-top: 18px;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, .18);
   }
 
-  .head-chips {
+  .hero p {
+    color: rgba(255, 255, 255, .88);
+    font-size: 14px;
+    margin-top: 9px;
+  }
+
+  .chips {
     display: flex;
-    align-items: center;
     justify-content: center;
     gap: 7px;
     flex-wrap: wrap;
-    margin-top: 12px;
+    margin-top: 14px;
   }
 
-  .head-chip {
-    background: rgba(255, 255, 255, .15);
-    border: 1px solid rgba(255, 255, 255, .24);
-    border-radius: 6px;
-    color: rgba(255, 255, 255, .95);
+  .chip {
+    background: rgba(255, 255, 255, .16);
+    border: 1px solid rgba(255, 255, 255, .22);
+    border-radius: 999px;
+    color: #fff;
     font-size: 12px;
     font-weight: 700;
-    padding: 5px 9px;
+    padding: 5px 11px;
   }
 
-  .card-body {
-    padding: 24px 20px calc(22px + env(safe-area-inset-bottom));
+  .content {
+    position: relative;
+    z-index: 2;
+    margin: -52px 14px 0;
+    background: var(--panel);
+    border: 1px solid rgba(221, 235, 232, .9);
+    border-radius: 8px;
+    box-shadow: 0 22px 50px rgba(18, 67, 66, .16);
+    padding: 24px 18px calc(24px + env(safe-area-inset-bottom));
+  }
+
+  .scan-block {
     text-align: center;
   }
 
-  .scan-title {
+  .scan-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
     color: var(--muted);
     font-size: 13px;
     font-weight: 700;
   }
 
-  .scan-title span {
-    display: block;
-    color: var(--ink);
-    font-size: 18px;
-    font-weight: 800;
-    margin-bottom: 3px;
+  .scan-label svg {
+    color: var(--brand);
   }
 
   .qr-frame {
     width: 236px;
     height: 236px;
-    margin: 16px auto 12px;
-    border: 1px solid var(--line);
+    margin: 17px auto 10px;
     border-radius: 8px;
     background: #fff;
+    border: 1px solid #dcebe8;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: inset 0 0 0 8px #fff, 0 0 0 1px #e9f1f0;
+    padding: 8px;
+    box-shadow: 0 8px 20px rgba(16, 67, 66, .06);
   }
 
   .qr-frame canvas {
-    width: 208px;
-    height: 208px;
+    width: 212px;
+    height: 212px;
+    border-radius: 6px;
   }
 
-  .scan-tip {
+  .tip {
     color: var(--muted);
     font-size: 12px;
     line-height: 1.8;
-  }
-
-  .download-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-    width: 100%;
-    min-height: 52px;
-    margin-top: 18px;
-    border-radius: 8px;
-    background: linear-gradient(120deg, var(--teal-dark), var(--teal));
-    color: #fff;
-    font: inherit;
-    font-size: 16px;
-    font-weight: 800;
-    text-decoration: none;
-    box-shadow: 0 10px 22px rgba(11, 122, 114, .26);
-    transition: transform .14s, box-shadow .14s;
-  }
-
-  .download-btn:hover {
-    transform: translateY(-1px);
-  }
-
-  .download-btn:active {
-    transform: translateY(0);
-  }
-
-  .download-btn svg {
-    width: 19px;
-    height: 19px;
-  }
-
-  .version-note {
-    color: var(--muted);
-    font-size: 11px;
-    margin-top: 10px;
   }
 
   .wechat-hint {
@@ -196,25 +198,63 @@
     display: block;
   }
 
+  .download-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    width: 100%;
+    min-height: 54px;
+    margin-top: 20px;
+    border-radius: 8px;
+    background: linear-gradient(120deg, var(--brand-deep), var(--brand));
+    color: #fff;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 14px 28px rgba(11, 125, 116, .26);
+    transition: transform .15s, box-shadow .15s, filter .15s;
+  }
+
+  .download-btn:hover {
+    transform: translateY(-1px);
+    filter: saturate(1.08);
+    box-shadow: 0 18px 34px rgba(11, 125, 116, .32);
+  }
+
+  .download-btn:active {
+    transform: scale(.99);
+  }
+
+  .download-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
   .missing {
+    background: var(--panel);
+    border-radius: 8px;
+    box-shadow: 0 18px 40px rgba(18, 67, 66, .14);
+    margin: 40px 16px;
+    padding: 44px 20px;
     text-align: center;
-    padding: 46px 24px;
   }
 
   .missing h1 {
-    font-size: 22px;
+    font-size: 21px;
   }
 
   .missing p {
     color: var(--muted);
     font-size: 14px;
-    margin-top: 10px;
+    margin-top: 9px;
   }
 
   .missing a {
     display: inline-block;
     margin-top: 18px;
-    background: var(--teal);
+    background: var(--brand);
     color: #fff;
     text-decoration: none;
     padding: 11px 18px;
@@ -222,16 +262,32 @@
     font-weight: 800;
   }
 
-  @media (min-width: 700px) {
+  @media (min-width: 560px) {
     body {
-      background:
-        linear-gradient(180deg, #d8ede9 0%, #eef5f4 42%);
+      background: linear-gradient(180deg, #dbeae8, #eef5f4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+
+    .page {
+      min-height: 0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 30px 70px rgba(18, 67, 66, .18);
+    }
+
+    .content {
+      border-radius: 8px;
     }
   }
 </style>
 </head>
 <body>
-  <div id="content"></div>
+  <div class="page">
+    <div id="content"></div>
+  </div>
 
   <script src="apps.js"></script>
   <script src="qrcode.min.js"></script>
@@ -259,37 +315,39 @@
     function renderApp(app) {
       var content = document.getElementById("content");
       content.innerHTML =
-        '<div class="card">' +
-          '<header class="card-head">' +
-            '<div class="app-mark" style="background:' + esc(app.icon || "#0b7a72") + '">' + esc(app.name.charAt(0)) + "</div>" +
+        '<section class="hero">' +
+          '<div class="hero-inner">' +
+            '<div class="app-icon" style="background:' + esc(app.icon || "linear-gradient(135deg, #0b7d74, #38b2a4)") + '">' + esc(app.name.charAt(0)) + "</div>" +
             "<h1>" + esc(app.name) + "</h1>" +
-            '<div class="head-chips">' +
-              '<span class="head-chip">v' + esc(app.version) + "</span>" +
-              '<span class="head-chip">' + esc(app.size) + "</span>" +
-              '<span class="head-chip">' + esc(app.date) + "</span>" +
+            "<p>Android 安卓版本</p>" +
+            '<div class="chips">' +
+              '<span class="chip">v' + esc(app.version) + "</span>" +
+              '<span class="chip">' + esc(app.size) + "</span>" +
+              '<span class="chip">' + esc(app.date) + "</span>" +
             "</div>" +
-          "</header>" +
-          '<div class="card-body">' +
-            '<div class="scan-title"><span>扫码下载</span>Android 手机扫码直接安装</div>' +
+          "</div>" +
+        "</section>" +
+        '<section class="content">' +
+          '<div class="scan-block">' +
+            '<div class="scan-label">' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>' +
+              "<span>扫码下载</span>" +
+            "</div>" +
             '<div class="qr-frame"><div id="qrBox"></div></div>' +
-            '<p class="scan-tip">二维码每次发布后都指向最新版 APK</p>' +
+            '<p class="tip">使用手机扫码后可直接下载 APK 文件</p>' +
+            '<div class="wechat-hint" id="wechatHint">当前在微信内下载可能受限，请点右上角选择“在浏览器打开”后再下载。</div>' +
             '<a class="download-btn" id="downloadBtn" href="' + esc(app.apkUrl) + '" download>' +
               '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>' +
               '<span>下载 v' + esc(app.version) + "</span>" +
             "</a>" +
-            '<div class="version-note">需要 Android 6.0 及以上版本</div>' +
-            '<div class="wechat-hint" id="wechatHint">当前在微信内下载可能受限，请点右上角选择“在浏览器打开”后再下载。</div>' +
           "</div>" +
-        "</div>";
+        "</section>";
 
       document.title = app.name + " 下载";
       document.getElementById("downloadBtn").setAttribute("download", app.name + ".apk");
-
-      var hint = document.getElementById("wechatHint");
       if (isWeChat()) {
-        hint.classList.add("show");
+        document.getElementById("wechatHint").classList.add("show");
       }
-
       renderQR(app);
     }
 
@@ -301,9 +359,9 @@
       }
       new QRCode(box, {
         text: app.apkUrl,
-        width: 208,
-        height: 208,
-        colorDark: "#163334",
+        width: 212,
+        height: 212,
+        colorDark: "#193234",
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.M
       });
@@ -311,11 +369,11 @@
 
     function renderMissing() {
       document.getElementById("content").innerHTML =
-        '<div class="card"><div class="missing">' +
+        '<div class="missing">' +
           "<h1>未找到该应用</h1>" +
           "<p>请返回首页选择要下载的 App。</p>" +
           '<a href="index.html">返回全部 App</a>' +
-        "</div></div>";
+        "</div>";
     }
 
     function init() {
