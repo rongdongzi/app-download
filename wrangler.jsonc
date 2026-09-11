@@ -1,0 +1,8 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "dawn-frost-2c8e",
+  "compatibility_date": "2026-09-10",
+  "assets": {
+    "directory": "public"
+  }
+}
